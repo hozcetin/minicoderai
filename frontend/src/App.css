@@ -1,0 +1,131 @@
+/* --- DEĞİŞİKLİK BURADA --- */
+#root {
+  /* max-width, margin ve padding kaldırıldı. */
+  /* Artık #root elementi de tüm ekranı kaplayabilir. */
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+
+/* Blockly kaydırma çubuklarını varsayılan olarak gizle */
+.blocklyScrollbarHandle {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+}
+
+/* Blockly alanının üzerine gelindiğinde kaydırma çubuklarını görünür yap */
+.blocklySvg:hover .blocklyScrollbarHandle {
+  opacity: 1;
+}
+
+/* Dokunmatik ekranlarda sürükleme sırasında görünür yap */
+.blocklyScrollbarHandle.blocklyScrollbarHandleVisible {
+  opacity: 1;
+}
+
+/* App.css dosyasının sonuna eklenecek Modal stilleri */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  text-align: center;
+  max-width: 450px;
+  color: #333;
+}
+
+.modal-title {
+  margin-top: 0;
+  font-size: 24px;
+  font-weight: bold;
+  color: #27ae60; /* Başarı için yeşil renk */
+}
+
+.modal-message {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 20px 0;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.modal-button {
+  padding: 10px 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-button.next {
+  background-color: #27ae60;
+  color: white;
+}
+.modal-button.next:hover {
+  background-color: #229954;
+}
+
+.modal-button.retry {
+  background-color: #f1f1f1;
+  color: #555;
+  border: 1px solid #ddd;
+}
+.modal-button.retry:hover {
+  background-color: #e7e7e7;
+}
