@@ -1,3 +1,5 @@
+// backend/routes/auth.js
+
 const express = require('express');
 const pool = require('../config/database');
 const bcrypt = require('bcryptjs');
@@ -6,7 +8,7 @@ const router = express.Router();
 
 const SECRET_KEY = 'bu_cok_onemli_gizli_bir_anahtar_olmalı_123!';
 
-// Kullanıcı Kaydı
+// Kullanıcı Kaydı (Bu kısımda bir değişiklik yok)
 router.post('/register', async (req, res) => {
     try {
         const { name, email, password, role, age, gender } = req.body;
@@ -31,7 +33,6 @@ router.post('/register', async (req, res) => {
             [name, email, hashedPassword, role || 'student', ageValue, genderValue]
         );
         
-        // DÜZELTME: Dönen veriyi userPayload olarak alıyoruz.
         const userPayload = newUserQuery.rows[0];
 
         const token = jwt.sign(
@@ -40,7 +41,6 @@ router.post('/register', async (req, res) => {
             { expiresIn: '24h' }
         );
 
-        // Frontend'e hem token'ı hem de TÜM kullanıcı verisini gönderiyoruz.
         res.status(201).json({ token, user: userPayload });
 
     } catch (err) {
@@ -49,28 +49,43 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Kullanıcı Girişi (Bu rotanın zaten doğru veri döndürdüğünden emin oluyoruz)
+// Kullanıcı Girişi
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
 
-        if (user.rows.length === 0) {
+        if (userResult.rows.length === 0) {
             return res.status(401).json({ error: "Kullanıcı bulunamadı veya şifre yanlış." });
         }
 
-        const validPassword = await bcrypt.compare(password, user.rows[0].password);
+        const user = userResult.rows[0];
+        const validPassword = await bcrypt.compare(password, user.password);
+
         if (!validPassword) {
             return res.status(401).json({ error: "Kullanıcı bulunamadı veya şifre yanlış." });
         }
         
+        // --- YENİ EKLENEN KISIM ---
+        // Kullanıcının ilerleme verilerini yeni tablodan çekiyoruz.
+        // Frontend'in öğrenciye göstereceği "ilk" başarı verilerini seçiyoruz.
+        const progressResult = await pool.query(
+            'SELECT level_id, first_score, first_stars FROM user_progress WHERE user_id = $1',
+            [user.id]
+        );
+        // -------------------------
+
         const userPayload = {
-            id: user.rows[0].id,
-            name: user.rows[0].name,
-            email: user.rows[0].email,
-            role: user.rows[0].role,
-            age: user.rows[0].age,
-            gender: user.rows[0].gender
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            age: user.age,
+            gender: user.gender,
+            // --- YENİ EKLENEN KISIM ---
+            // Çektiğimiz ilerleme verisini kullanıcı bilgisine ekliyoruz.
+            progress: progressResult.rows
+            // -------------------------
         };
         
         const token = jwt.sign(

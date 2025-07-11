@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 
 const styles = {
+  // ... stiller aynı kalacak ...
   scene: {
     width: '100%', height: '100%', backgroundColor: 'white',
     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
@@ -27,21 +28,30 @@ function Scene({ action, onComplete, levelId }) {
   const [isRobotActive, setIsRobotActive] = useState(false);
 
   useEffect(() => {
-    if (!action) return;
+    // DÜZELTME: action yoksa veya onComplete tanımlı değilse bir şey yapma
+    if (!action || typeof onComplete !== 'function') return;
 
     let text = '';
-    if (action === 'say_hello') text = 'Merhaba! İlk kodun çalıştı!';
-    if (action === 'move_forward') text = 'Harika, ilk adımı attım!';
+    let duration = 2000; // Varsayılan süre
+    if (action === 'say_hello') {
+      text = 'Merhaba! Kodum çalışıyor!';
+      duration = 2000;
+    }
+    if (action === 'move_forward') {
+      text = 'İşte bir adım attım!';
+      duration = 1000;
+    }
 
     setBubbleText(text);
     setIsBubbleVisible(true);
     setIsRobotActive(true);
     
+    // Animasyon süresi bitince `onComplete`'i çağır
     const timer = setTimeout(() => {
       setIsBubbleVisible(false);
       setIsRobotActive(false);
-      if (onComplete) onComplete();
-    }, 3000);
+      onComplete(); // Burası interpreter'ı devam ettirecek olan anahtar
+    }, duration);
 
     return () => clearTimeout(timer);
   }, [action, onComplete]);
